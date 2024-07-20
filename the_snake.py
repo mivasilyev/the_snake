@@ -177,14 +177,14 @@ def handle_keys(game_object):
             pg.quit()
             raise SystemExit
         if event.type == pg.KEYDOWN:
-            if event.key == pg.K_UP and game_object.direction != DOWN:
-                game_object.next_direction = UP
-            elif event.key == pg.K_DOWN and game_object.direction != UP:
-                game_object.next_direction = DOWN
-            elif event.key == pg.K_LEFT and game_object.direction != RIGHT:
-                game_object.next_direction = LEFT
-            elif event.key == pg.K_RIGHT and game_object.direction != LEFT:
-                game_object.next_direction = RIGHT
+            # Словарь обработки нажатий для управления змейкой:
+            snake_dir = {(pg.K_UP, LEFT): UP, (pg.K_UP, RIGHT): UP,
+                         (pg.K_DOWN, LEFT): DOWN, (pg.K_DOWN, RIGHT): DOWN,
+                         (pg.K_LEFT, UP): LEFT, (pg.K_LEFT, DOWN): LEFT,
+                         (pg.K_RIGHT, UP): RIGHT, (pg.K_RIGHT, DOWN): RIGHT}
+
+            snake_dir_key = (event.key, game_object.direction)
+            game_object.next_direction = snake_dir.get(snake_dir_key)
 
 
 def main():
@@ -193,7 +193,7 @@ def main():
     pg.init()
     # Создаем объекты классов.
     snake = Snake()
-    apple = Apple(forbidden=snake.positions)
+    apple = Apple(snake.positions)
 
     while True:
         """Основной цикл игры."""
@@ -206,13 +206,13 @@ def main():
         snake_head = snake.get_head_position()
         if snake_head == apple.position:
             snake.length += 1  # увеличиваем змейку,
-            apple.randomize_position(forbidden=snake.positions)
+            apple.randomize_position(snake.positions)
 
         # Если змейка столкнулась со своим телом, то
         if snake_head in snake.positions[1:]:
             screen.fill(color=BOARD_BACKGROUND_COLOR)  # всё поле в цвет фона
             snake.reset()  # сбрасываем змейку до исходного состояния
-            apple.randomize_position(forbidden=snake.positions)
+            apple.randomize_position(snake.positions)
 
         apple.draw()
         snake.draw()
