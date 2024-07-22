@@ -83,14 +83,15 @@ class GameObject:
 
         Переопределяется в дочерних классах.
         """
-        raise NotImplementedError("Метод draw родительского класса \
-                                  не определен.")
+        raise NotImplementedError('Метод draw родительского класса не '
+                                  'определен.')
 
 
 class Apple(GameObject):
     """Описание дочернего класса Apple(Яблоко)."""
 
-    def __init__(self, forbidden=[(320, 240)], color=APPLE_COLOR):
+    def __init__(self, forbidden=[(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)],
+                 color=APPLE_COLOR):
         """Метод задействует инициализатор родительского класса.
 
         Затем переопределяет цвет и позицию объекта исключая местоположение
@@ -119,9 +120,9 @@ class Apple(GameObject):
 class Snake(GameObject):
     """Описание дочернего класса Snake(Змейка)."""
 
-    def __init__(self):
+    def __init__(self, color=SNAKE_COLOR):
         """Метод задействует reset и переопределяет направление движения."""
-        self.reset()
+        self.reset(color=color)
         self.direction = RIGHT
 
     def move(self):
@@ -158,12 +159,11 @@ class Snake(GameObject):
         """Метод обновления направления после нажатия игроком на клавишу."""
         if next_direction:
             self.direction = next_direction
-            next_direction = None
 
-    def reset(self):
+    def reset(self, color=SNAKE_COLOR):
         """Метод инициализации змейки при создании или после столкновения."""
         super().__init__()
-        self.body_color = SNAKE_COLOR
+        self.body_color = color
         self.last = None
         self.direction = choice([UP, DOWN, LEFT, RIGHT])
         self.next_direction = None
@@ -175,7 +175,7 @@ def handle_keys(game_object):
     for event in pg.event.get():
         if event.type == pg.QUIT:
             pg.quit()
-            raise SystemExit
+            raise SystemExit('Пользователь закрыл окно.')
         if event.type == pg.KEYDOWN:
             # Словарь обработки нажатий для управления змейкой:
             snake_dir = {(pg.K_UP, LEFT): UP, (pg.K_UP, RIGHT): UP,
