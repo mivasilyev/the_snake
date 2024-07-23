@@ -136,7 +136,7 @@ class Snake(GameObject):
         self.positions.insert(0, new_head_position)
         # При превышении длины отрезаем хвост
         if len(self.positions) > self.length:
-            self.last = self.positions.pop(-1)
+            self.last = self.positions.pop()
         else:
             self.last = None
 
